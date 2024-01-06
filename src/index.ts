@@ -35,6 +35,8 @@ function originIsAllowed(origin: string) {
 }
 
 wsServer.on('request', function(request) {
+    console.log('Inside Connection');
+    
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
         request.reject();
@@ -51,6 +53,7 @@ wsServer.on('request', function(request) {
         // Todo add rate limiting logic here
         if (message.type === 'utf8') {
             try {
+                console.log("Messsage " + message.utf8Data)
                 messageHanlder(connection, JSON.parse(message.utf8Data))
             } catch (error) {
                 
@@ -59,18 +62,23 @@ wsServer.on('request', function(request) {
             // connection.sendUTF(message.utf8Data);
         }
     });
-    connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
+    // connection.on('close', function(reasonCode, description) {
+    //     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    //     userManager.removeUser()
+    // });
+    
 });
 
 function messageHanlder (ws:connection, message: IncomingMessage) {
     if(message.type === SupportedMessage.JoinRoom) {
+        console.log("Incoming message: " + JSON.stringify(message));
+        console.log("User Added")
         const payload = message.payload;
-        userManager.addUser(payload.name, payload.userId, payload.roomId, ws)
+        userManager.addUser(payload.name, payload.userId, payload.roomId, ws);
     }
 
     if (message.type === SupportedMessage.SendMessage) {
+        console.log(message)
         const payload = message.payload;
         const user = userManager.getUser(payload.roomId,payload.userId);
         if(!user){
@@ -97,7 +105,7 @@ function messageHanlder (ws:connection, message: IncomingMessage) {
 
     if(message.type === SupportedMessage.UpvoteMessage){
         const payload = message.payload;
-        const chat  = store.upvote(payload.userId, payload.roomId, payload.chatId);
+        const chat = store.upvote(payload.userId, payload.roomId, payload.chatId);
 
         if(!chat){
             return;

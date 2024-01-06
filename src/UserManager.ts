@@ -28,9 +28,13 @@ export class UserManager {
             name,
             conn: socket
         })
+        socket.on('close', (reasonCode, description) =>{
+            this.removeUser(roomId,userId)
+        });
     }
 
     removeUser(roomId: string, userId: string){
+        console.log("User removed")
         const users = this.rooms.get(roomId)?.users;
         if(users){
             users.filter(({id})=> id !== userId);
@@ -46,7 +50,7 @@ export class UserManager {
 
     broadcast(roomId: string, userId:string, message: OutgoingMessage ){
         const user = this.getUser(roomId,userId);
-        if(user){
+        if(!user){
             console.error("User not found");
             return;
         }
@@ -55,8 +59,9 @@ export class UserManager {
             console.error("Room not found");
             return;
         }
-
+        
         room.users.forEach(({conn})=>{
+            console.log("Outgoing Message " + JSON.stringify(message));
             conn.sendUTF(JSON.stringify(message))
         })
     }

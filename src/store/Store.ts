@@ -13,7 +13,6 @@ export abstract class Store{
 
     }
     initRoom(roomId: string){
-        
     }
 
     getChats(roomId: string, limit: number, offset: number){
@@ -22,7 +21,8 @@ export abstract class Store{
     addChat(userId:UserId, name:string, roomId: string, message:string){
         
     }
-    upvote(userId:UserId, roomId: string, id:string){
+    //chatId and Id Different
+    upvote(userId:UserId, roomId: string, chatId:string){
         
     }
 }
