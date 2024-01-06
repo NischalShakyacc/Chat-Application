@@ -37,7 +37,7 @@ export class InMemoryStore implements Store{
 
         const room = this.store.get(roomId);
         console.log(this.store)
-        
+
         if(!room){
             return;
         }
@@ -62,6 +62,9 @@ export class InMemoryStore implements Store{
         const chat = room.chats.find(({id})=> id === chatId);
 
         if(chat){
+            if(chat.upvotes.find(chat => chat === userId)){
+                return chat;
+            }
             chat.upvotes.push(userId)
         }
         return chat;
