@@ -54,6 +54,7 @@ export class UserManager {
             console.error("User not found");
             return;
         }
+        
         const room = this.rooms.get(roomId);
         if(!room){
             console.error("Room not found");

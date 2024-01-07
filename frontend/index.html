@@ -17,7 +17,6 @@
         const ws = new WebSocket("ws://localhost:8080","echo-protocol");
         let userId =  Math.floor(Math.random()*10000).toString();
         ws.onopen = function(){
-            alert('Connection established')
             ws.send(JSON.stringify({
                 type: "JOIN_ROOM",
                 payload:{
@@ -29,8 +28,6 @@
         }
 
         let chat = document.getElementById('chat').value;
-        console.log(chat);
-
         ws.onmessage = function(event){
             try {
                 const {payload, type} = JSON.parse(event.data);
@@ -41,14 +38,14 @@
                     
                     buttonNode.innerHTML = `${payload.upvotes}`;
                     buttonNode.setAttribute("onclick",`sendUpvote(${payload.id})`)
-                    buttonNode.setAttribute("id", `message-${chatId}`)
+                    buttonNode.setAttribute("id", `message-${payload.chatId}`)
 
                     document.getElementById('message').appendChild(textNode);
                     document.getElementById('message').appendChild(buttonNode);
                 }
 
                 if(type === 'UPDATE_CHAT'){
-                    const buttonNode = document.getElementById(payload.chatId);
+                    const buttonNode = document.getElementById(`Message: ${payload.chatId}`);
                     buttonNode.innerHTML = `${payload.upvotes}`;
                     buttonNode.setAttribute("onclick",`sendUpvote(${payload.id})`)
                     document.getElementById('message').appendChild(textNode);
@@ -66,7 +63,6 @@
                     chatId,
                     userId: userId,
                     roomId: '1'
-
                 }
             }))
         }
@@ -81,8 +77,6 @@
                 }
             }))
         }
-        
     </script>
-    
 </body>
 </html>
